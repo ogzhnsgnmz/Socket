@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Net;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Socket.Client;
@@ -9,9 +10,9 @@ public partial class Form2 : Form
     {
         InitializeComponent();
     }
+
     private TcpClient istemci;
     private NetworkStream akim;
-
     private void Log(string mesaj)
     {
         if (InvokeRequired)

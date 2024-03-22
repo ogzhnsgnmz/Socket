@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Socket.Server
 {
@@ -11,7 +12,13 @@ namespace Socket.Server
         {
             InitializeComponent();
 
-            sunucu = new TcpListener(IPAddress.Any, 12345);
+            StartServer();
+            StartClient();
+        }
+
+        private void StartServer()
+        {
+            sunucu = new TcpListener(IPAddress.Any, 12346);
             sunucu.Start();
 
             dinleyiciThread = new Thread(new ThreadStart(IstemcileriDinle));
@@ -20,8 +27,30 @@ namespace Socket.Server
             Log("Sunucu baþlatýldý. Ýstemciler bekleniyor...");
         }
 
+        private void StartClient()
+        {
+            try
+            {
+                istemci = new TcpClient();
+                istemci.Connect("127.0.0.1", 12345);
+                akim = istemci.GetStream();
+                Log("Sunucuya baðlandý.");
+                string mesaj = "127.0.0.1:12345";
+                byte[] gonderiVerisi = Encoding.UTF8.GetBytes(mesaj);
+                akim.Write(gonderiVerisi, 0, gonderiVerisi.Length);
+                Log("Sunucuya gönderildi: " + mesaj);
+            }
+            catch (Exception ex)
+            {
+                Log("Hata: " + ex.Message);
+            }
+        }
+
         private TcpListener sunucu;
         private Thread dinleyiciThread;
+
+        private TcpClient istemci;
+        private NetworkStream akim;
 
         private void IstemcileriDinle()
         {
